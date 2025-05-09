@@ -1,7 +1,8 @@
 'use client';
 import { useSearchParams, useRouter } from 'next/navigation';
+import { Suspense } from 'react';
 
-export default function BookingSuccess() {
+function SuccessContent() {
   const params = useSearchParams();
   const router = useRouter();
 
@@ -59,5 +60,13 @@ export default function BookingSuccess() {
         Book another appointment &rarr;
       </button>
     </div>
+  );
+}
+
+export default function BookingSuccess() {
+  return (
+    <Suspense>
+      <SuccessContent />
+    </Suspense>
   );
 } 
