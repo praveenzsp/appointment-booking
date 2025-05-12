@@ -1,4 +1,7 @@
+import { createBooking } from '@/actions/booking';
+import { BookingError } from '@/lib/errors';
 import { XMarkIcon } from '@heroicons/react/24/outline';
+import { useState } from 'react';
 
 interface BookingSidebarProps {
   isOpen: boolean;
@@ -17,15 +20,47 @@ export interface BookingFormData {
 }
 
 export const BookingSidebar = ({ isOpen, onClose, selectedDate, selectedTimezone, selectedTime, onSubmit }: BookingSidebarProps) => {
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    onSubmit({
-      name: formData.get('name') as string,
-      email: formData.get('email') as string,
-      mobileNumber: formData.get('mobileNumber') as string,
-      address: formData.get('address') as string,
-    });
+    setError(null);
+    setIsSubmitting(true);
+
+    try {
+      const formData = new FormData(e.currentTarget);
+      const bookingData = {
+        name: formData.get('name') as string,
+        email: formData.get('email') as string,
+        mobileNumber: formData.get('mobileNumber') as string,
+        address: formData.get('address') as string,
+        date: selectedDate,
+        time: selectedTime,
+        timezone: selectedTimezone.value,
+      };
+
+      // Call the server action
+      const result = await createBooking(bookingData);
+
+      if (result.success) {
+        // Only call onSubmit if the server action was successful
+        onSubmit({
+          name: bookingData.name,
+          email: bookingData.email,
+          mobileNumber: bookingData.mobileNumber,
+          address: bookingData.address,
+        });
+      }
+    } catch (error) {
+      if (error instanceof BookingError) {
+        setError(error.message);
+      } else {
+        setError('An unexpected error occurred. Please try again.');
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -40,10 +75,18 @@ export const BookingSidebar = ({ isOpen, onClose, selectedDate, selectedTimezone
           <button
             onClick={onClose}
             className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            disabled={isSubmitting}
           >
             <XMarkIcon className="h-6 w-6" />
           </button>
         </div>
+
+        {/* Error Message */}
+        {error && (
+          <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-red-600 text-sm">{error}</p>
+          </div>
+        )}
 
         {/* Selected Details */}
         <div className="mb-6 space-y-4">
@@ -117,9 +160,14 @@ export const BookingSidebar = ({ isOpen, onClose, selectedDate, selectedTimezone
 
           <button
             type="submit"
-            className="mt-auto w-full bg-[#ff4081] text-white py-3 rounded-md hover:bg-[#e63a73] transition-colors"
+            disabled={isSubmitting}
+            className={`mt-6 w-full py-3 px-4 rounded-lg text-white font-medium transition-colors ${
+              isSubmitting
+                ? 'bg-gray-400 cursor-not-allowed'
+                : 'bg-[#ff4081] hover:bg-[#e63d75]'
+            }`}
           >
-            Confirm Booking
+            {isSubmitting ? 'Confirming Booking...' : 'Confirm Booking'}
           </button>
         </form>
       </div>
