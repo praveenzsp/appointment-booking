@@ -7,7 +7,10 @@ function SuccessContent() {
   const router = useRouter();
 
   // Get booking details from query params
-  // const name = params.get('name');
+  const name = params.get('name');
+  const email = params.get('email');
+  const mobileNumber = params.get('mobileNumber');
+  const address = params.get('address');
   const date = params.get('date');
   const time = params.get('time');
   const timezone = params.get('timezone');
@@ -36,6 +39,12 @@ function SuccessContent() {
         </div>
         <div className="text-gray-600 mb-1">Maintenance Planning</div>
         <div className="text-gray-500 text-sm mb-4">{timezone}</div>
+        <div className="w-full text-left text-gray-700 text-sm mb-2">
+          <div><span className="font-semibold">Name:</span> {name}</div>
+          <div><span className="font-semibold">Email:</span> {email}</div>
+          <div><span className="font-semibold">Mobile:</span> {mobileNumber}</div>
+          <div><span className="font-semibold">Address:</span> {address}</div>
+        </div>
         <div className="flex gap-4 justify-center">
           <a
             href="#"

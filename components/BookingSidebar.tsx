@@ -13,6 +13,7 @@ export interface BookingFormData {
   name: string;
   email: string;
   mobileNumber: string;
+  address: string;
 }
 
 export const BookingSidebar = ({ isOpen, onClose, selectedDate, selectedTimezone, selectedTime, onSubmit }: BookingSidebarProps) => {
@@ -23,6 +24,7 @@ export const BookingSidebar = ({ isOpen, onClose, selectedDate, selectedTimezone
       name: formData.get('name') as string,
       email: formData.get('email') as string,
       mobileNumber: formData.get('mobileNumber') as string,
+      address: formData.get('address') as string,
     });
   };
 
@@ -96,6 +98,19 @@ export const BookingSidebar = ({ isOpen, onClose, selectedDate, selectedTimezone
                 required
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#ff4081] focus:border-transparent"
                 placeholder="Enter your mobile number"
+              />
+            </div>
+            <div>
+              <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
+                Address
+              </label>
+              <input
+                type="text"
+                id="address"
+                name="address"
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#ff4081] focus:border-transparent"
+                placeholder="Enter your address"
               />
             </div>
           </div>

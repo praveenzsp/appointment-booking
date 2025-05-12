@@ -18,6 +18,9 @@ export default function AppointmentBooking() {
   const handleBookingSubmit = (formData: BookingFormData) => {
     const params = new URLSearchParams({
       name: formData.name,
+      email: formData.email,
+      mobileNumber: formData.mobileNumber,
+      address: formData.address,
       date: selectedDate.toISOString(),
       time: selectedTime,
       timezone: selectedTimezone.label,
