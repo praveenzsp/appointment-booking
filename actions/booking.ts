@@ -2,6 +2,7 @@
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import { BookingError } from "@/lib/errors";
+import { revalidatePath } from 'next/cache';
 
 // Define validation schema
 const bookingSchema = z.object({
@@ -40,6 +41,9 @@ export const createBooking = async (booking: Booking) => {
     const newBooking = await prisma.booking.create({
       data: validatedData,
     });
+
+    // Revalidate the dashboard page
+    revalidatePath('/admin/dashboard');
 
     return { success: true, data: newBooking };
   } catch (error) {
